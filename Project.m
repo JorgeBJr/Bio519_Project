@@ -40,6 +40,16 @@ theta = atand(deltaFraction); %This returns the arctan of the function
 
 %Because I want to see the theta with respect to time...
 figure;
-plot(t,theta,'.','MarkerSize',20)
+plot(t,theta,'LineWidth',2)
 xlabel('Time (in seconds)')
 ylabel('Theta (in degrees)')
+
+%Fast Fourier transform stuff
+junk = fft(theta);
+f = Fs*(0:(L/2))/L;
+ampscale = L/2+1; %This is to scale the amplitude
+figure;
+plot(f(1:100),(abs(junk(1:100))/ampscale),'LineWidth',2);
+find(abs(junk(1:100)) == max(abs(junk(1:100))))
+xlabel('f (Hz)')
+ylabel('|P1(f)| <-- Something about a theta transform?')
