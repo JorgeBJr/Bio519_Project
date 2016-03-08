@@ -5,7 +5,7 @@ clear all; close all; clc;
 data_centroid = csvread('811m_Centerxypts.csv',1,0); %This will import the 
 %CSV file of the centroid (i.e. input stimulus) with the appropriate offset
 %that imports the two columns without the headers. 
-data_abdomen = csvread('811m_completexypts.csv',1,0); %This will import the 
+data_abdomen = csvread('811m_Abdoxypts.csv',1,0); %This will import the 
 %CSV file of the abdomen (i.e. output response) with the appropriate offset 
 %that imports the two columns without the headers. 
 
@@ -55,11 +55,13 @@ hold on;
 plot(t,theta_Abdomen,'LineWidth',2)
 xlabel('Time (in seconds)')
 ylabel('Theta (in degrees)')
+legend('Centroid','Abdomen')
 
 %Fast Fourier transform stuff
-stuff_centroid = fft(theta_Centroid);
-stuff_abdomen = fft(theta_Abdomen);
+stuff_centroid = fft(theta_Centroid,L);
+stuff_abdomen = fft(theta_Abdomen,L);
 f = Fs*(0:(L/2))/L;
+%f=(1./(T.*L)).*([0:(L/2), ((L/2)-1):-1:1]);
 ampscale = L/2+1; %This is to scale the amplitude
 figure;
 plot(f(1:100),(abs(stuff_centroid(1:100))/ampscale),'LineWidth',2);
