@@ -28,7 +28,7 @@ legend('Centroid (input stimulus', 'Abdomen (output response)',...
 
 %The following five lines of code are from 
 %http://www.mathworks.com/help/matlab/ref/fft.html 
-Fs = 3; %frequency is 3 Hertz
+Fs = 500; %Sample frequency
 T = 1/Fs; %This is the period
 L = 1000; %This is the length of the signal since our data sets are arrays 
 %of 1000 x 1
