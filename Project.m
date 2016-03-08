@@ -11,6 +11,8 @@ data_abdomen = csvread('811m_completexypts.csv',1,0); %This will import the
 
 Centroid_X = data_centroid(:,1);
 Centroid_Y = data_centroid(:,2);
+StaticPoint_X=530.810347;
+StaticPoint_Y=174.693939;
 Abdomen_X = data_abdomen(:,1);
 Abdomen_Y = data_abdomen(:,2);
 
@@ -18,9 +20,11 @@ figure;
 plot(Centroid_X',Centroid_Y','.','MarkerSize',20)
 hold on;
 plot(Abdomen_X',Abdomen_Y','.','MarkerSize',20)
+plot(StaticPoint_X, StaticPoint_Y,'k.','MarkerSize',20)
 xlabel('x position')
 ylabel('y position')
-%Frequency is 3 Hz? Check with Brandon
+legend('Centroid (input stimulus', 'Abdomen (output response)',...
+    'Static Point')
 
 %The following five lines of code are from 
 %http://www.mathworks.com/help/matlab/ref/fft.html 
@@ -30,26 +34,37 @@ L = 1000; %This is the length of the signal since our data sets are arrays
 %of 1000 x 1
 t = (0:L-1)*T; %This is how we get our time vector.
 
+%Finding theta of the centroid with respect to the static point
+deltaX_Centroid = Centroid_X - StaticPoint_X;
+deltaY_Centroid = Centroid_Y - StaticPoint_Y;
+deltaCentroid_Fraction = deltaY_Centroid./deltaX_Centroid;
+theta_Centroid = atand(deltaCentroid_Fraction); %This returns the arctan 
+%of the function IN DEGREES
 
-%Finding theta by determining the difference between the input and output
-deltaX = Centroid_X - Abdomen_X;
-deltaY = Centroid_Y - Abdomen_Y;
-deltaFraction = deltaY./deltaX;
-theta = atand(deltaFraction); %This returns the arctan of the function 
-%IN DEGREES
+%Finding theta of the abdomen with respect to the static point
+deltaX_Abdomen = Abdomen_X - StaticPoint_X;
+deltaY_Abdomen = Abdomen_Y - StaticPoint_Y;
+deltaAbdomen_Fraction = deltaY_Abdomen./deltaX_Abdomen;
+theta_Abdomen = atand(deltaAbdomen_Fraction); %This returns the arctan 
+%of the function IN DEGREES
 
 %Because I want to see the theta with respect to time...
 figure;
-plot(t,theta,'LineWidth',2)
+plot(t,theta_Centroid,'LineWidth',2)
+hold on;
+plot(t,theta_Abdomen,'LineWidth',2)
 xlabel('Time (in seconds)')
 ylabel('Theta (in degrees)')
 
 %Fast Fourier transform stuff
-junk = fft(theta);
+stuff_centroid = fft(theta_Centroid);
+stuff_abdomen = fft(theta_Abdomen);
 f = Fs*(0:(L/2))/L;
 ampscale = L/2+1; %This is to scale the amplitude
 figure;
-plot(f(1:100),(abs(junk(1:100))/ampscale),'LineWidth',2);
-find(abs(junk(1:100)) == max(abs(junk(1:100))))
+plot(f(1:100),(abs(stuff_centroid(1:100))/ampscale),'LineWidth',2);
+hold on;
+plot(f(1:100),(abs(stuff_abdomen(1:100))/ampscale),'LineWidth',2);
 xlabel('f (Hz)')
-ylabel('|P1(f)| <-- Something about a theta transform?')
+ylabel('Amplitude of abdomen response')
+legend('Centroid','Abdomen')
