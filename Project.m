@@ -59,7 +59,7 @@ legend('Centroid','Abdomen')
 
 %Fast Fourier transform stuff with subtracting the mean to reduce noise
 stuff_centroid_m = fft(theta_Centroid_m-mean(theta_Centroid_m),L);
-stuff_abdomen_m = fft(theta_Abdomen_m-mean(theta_Aentroid_m),L);
+stuff_abdomen_m = fft(theta_Abdomen_m-mean(theta_Abdomen_m),L);
 
 f = Fs*(0:(L/2))/L;
 %f=(1./(T.*L)).*([0:(L/2), ((L/2)-1):-1:1]);
@@ -150,8 +150,8 @@ legend('Centroid','Abdomen')
 %% Find the Gain
 
 %Gain of the magnetic 
-Gain_m = abs(stuff_abdomen_nm(find(ismember(f,3))))/...
-    abs(stuff_centroid_nm(find(ismember(f,3))))
+Gain_m = abs(stuff_abdomen_m(find(ismember(f,3))))/...
+    abs(stuff_centroid_m(find(ismember(f,3))))
 %find(ismember(f,3)) finds the location of the cell where the value of the
 %frequency is 3 Hz. Taking the absolute value of the abdomen and the
 %centroid at the 3 Hz frequency location gives us the gain.
