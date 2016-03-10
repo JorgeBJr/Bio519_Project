@@ -1,7 +1,24 @@
 %% Project - magnetic
 clearvars; close all; clc;
 
+listofcsvfiles = dir('*.csv');  %the asterisk is a wildcard
+%The dir function returns a "listing" of an M x 1 "structure." The 
+%structure has five fields in this case listing: name, date, byte, isdir, 
+%datenum.
+%I used the wildcard because I know the number of text files will
+%definitely increase as we gather more data.
+%For more information enter   help dir   into MATLAB mainframe
+
+%We are ONLY concerned with the number of elements in this array AND the
+%names of the files.
+%The next line saves the number of elements into a variable using the 
+%numel() function
+NumOfCSVFiles = numel(listofcsvfiles);
+
+for i = 1:NumOfCSVFiles;
 %% Inside the loop
+
+
 
 %Import stuff
 data_centroid_m = csvread('811m_Centerxypts.csv',1,0); %This will import the 
@@ -18,15 +35,15 @@ StaticPoint_Y_m = 174.693939;
 Abdomen_X_m = data_abdomen_m(:,1);
 Abdomen_Y_m = data_abdomen_m(:,2);
 
-figure;
-plot(Centroid_X_m',Centroid_Y_m','.','MarkerSize',20)
-hold on;
-plot(Abdomen_X_m',Abdomen_Y_m','.','MarkerSize',20)
-plot(StaticPoint_X_m, StaticPoint_Y_m,'k.','MarkerSize',20)
-xlabel('x position')
-ylabel('y position')
-legend('Centroid (input stimulus', 'Abdomen (output response)',...
-    'Static Point')
+% figure;
+% plot(Centroid_X_m',Centroid_Y_m','.','MarkerSize',20)
+% hold on;
+% plot(Abdomen_X_m',Abdomen_Y_m','.','MarkerSize',20)
+% plot(StaticPoint_X_m, StaticPoint_Y_m,'k.','MarkerSize',20)
+% xlabel('x position')
+% ylabel('y position')
+% legend('Centroid (input stimulus', 'Abdomen (output response)',...
+%     'Static Point')
 
 %The following five lines of code are from 
 %http://www.mathworks.com/help/matlab/ref/fft.html 
@@ -51,28 +68,27 @@ theta_Abdomen_m = atand(deltaAbdomen_Fraction_m); %This returns the arctan
 %of the function IN DEGREES
 
 %Because I want to see the theta with respect to time...
-figure;
-plot(t,theta_Centroid_m,'LineWidth',2)
-hold on;
-plot(t,theta_Abdomen_m,'LineWidth',2)
-xlabel('Time (in seconds)')
-ylabel('Theta (in degrees)')
-legend('Centroid','Abdomen')
+% figure;
+% plot(t,theta_Centroid_m,'LineWidth',2)
+% hold on;
+% plot(t,theta_Abdomen_m,'LineWidth',2)
+% xlabel('Time (in seconds)')
+% ylabel('Theta (in degrees)')
+% legend('Centroid','Abdomen')
 
 %Fast Fourier transform stuff with subtracting the mean to reduce noise
 stuff_centroid_m = fft(theta_Centroid_m-mean(theta_Centroid_m),L);
 stuff_abdomen_m = fft(theta_Abdomen_m-mean(theta_Abdomen_m),L);
 
 f = Fs*(0:(L/2))/L;
-%f=(1./(T.*L)).*([0:(L/2), ((L/2)-1):-1:1]);
-ampscale = L/2+1; %This is to scale the amplitude
-figure;
-plot(f(1:100),(abs(stuff_centroid_m(1:100))/ampscale),'LineWidth',2);
-hold on;
-plot(f(1:100),(abs(stuff_abdomen_m(1:100))/ampscale),'LineWidth',2);
-xlabel('f (Hz)')
-ylabel('Amplitude')
-legend('Centroid','Abdomen')
+% ampscale = L/2+1; %This is to scale the amplitude
+% figure;
+% plot(f(1:100),(abs(stuff_centroid_m(1:100))/ampscale),'LineWidth',2);
+% hold on;
+% plot(f(1:100),(abs(stuff_abdomen_m(1:100))/ampscale),'LineWidth',2);
+% xlabel('f (Hz)')
+% ylabel('Amplitude')
+% legend('Centroid','Abdomen')
 
 %% Non-magnetic
 
@@ -91,16 +107,16 @@ StaticPoint_Y_nm = 174.693939;
 Abdomen_X_nm = data_abdomen_nm(:,3);
 Abdomen_Y_nm = data_abdomen_nm(:,4);
 
-figure;
-plot(Centroid_X_nm',Centroid_Y_nm','.','MarkerSize',20)
-hold on;
-plot(Abdomen_X_nm',Abdomen_Y_nm','.','MarkerSize',20)
-plot(StaticPoint_X_nm, StaticPoint_Y_nm,'k.','MarkerSize',20)
-title('Non-magnetic')
-xlabel('x position')
-ylabel('y position')
-legend('Centroid (input stimulus', 'Abdomen (output response)',...
-    'Static Point')
+% figure;
+% plot(Centroid_X_nm',Centroid_Y_nm','.','MarkerSize',20)
+% hold on;
+% plot(Abdomen_X_nm',Abdomen_Y_nm','.','MarkerSize',20)
+% plot(StaticPoint_X_nm, StaticPoint_Y_nm,'k.','MarkerSize',20)
+% title('Non-magnetic')
+% xlabel('x position')
+% ylabel('y position')
+% legend('Centroid (input stimulus', 'Abdomen (output response)',...
+%     'Static Point')
 
 %The following five lines of code are from 
 %http://www.mathworks.com/help/matlab/ref/fft.html 
@@ -125,14 +141,14 @@ theta_Abdomen_nm = atand(deltaAbdomen_Fraction_nm); %This returns the
 %arctan of the function IN DEGREES
 
 %Because I want to see the theta with respect to time...
-figure;
-plot(t,theta_Centroid_nm,'LineWidth',2)
-hold on;
-plot(t,theta_Abdomen_nm,'LineWidth',2)
-title('Non-magnetic')
-xlabel('Time (in seconds)')
-ylabel('Theta (in degrees)')
-legend('Centroid','Abdomen')
+% figure;
+% plot(t,theta_Centroid_nm,'LineWidth',2)
+% hold on;
+% plot(t,theta_Abdomen_nm,'LineWidth',2)
+% title('Non-magnetic')
+% xlabel('Time (in seconds)')
+% ylabel('Theta (in degrees)')
+% legend('Centroid','Abdomen')
 
 %Fast Fourier transform stuff
 stuff_centroid_nm = fft(theta_Centroid_nm-mean(theta_Centroid_nm),L);
@@ -140,14 +156,14 @@ stuff_abdomen_nm = fft(theta_Abdomen_nm-mean(theta_Abdomen_nm),L);
 
 f = Fs*(0:(L/2))/L;
 ampscale = L/2+1; %This is to scale the amplitude
-figure;
-plot(f(1:100),(abs(stuff_centroid_nm(1:100))/ampscale),'LineWidth',2);
-hold on;
-plot(f(1:100),(abs(stuff_abdomen_nm(1:100))/ampscale),'LineWidth',2);
-title('Non-magnetic')
-xlabel('f (Hz)')
-ylabel('Amplitude')
-legend('Centroid','Abdomen')
+% figure;
+% plot(f(1:100),(abs(stuff_centroid_nm(1:100))/ampscale),'LineWidth',2);
+% hold on;
+% plot(f(1:100),(abs(stuff_abdomen_nm(1:100))/ampscale),'LineWidth',2);
+% title('Non-magnetic')
+% xlabel('f (Hz)')
+% ylabel('Amplitude')
+% legend('Centroid','Abdomen')
 
 %% Find the Gain
 
@@ -171,3 +187,5 @@ Phase_m = (angle(stuff_abdomen_m(find(ismember(f,3))))-...
 %Phase of the non-magnetic 
 Phase_nm = (angle(stuff_abdomen_nm(find(ismember(f,3))))-...
     angle(stuff_centroid_nm(find(ismember(f,3)))))*180/pi
+
+end
