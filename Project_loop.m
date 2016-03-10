@@ -69,7 +69,7 @@ f = Fs*(0:(L/2))/L;
 
 %Gain of the signal
 Gain = abs(stuff_abdomen(find(ismember(f,3))))/...
-    abs(stuff_centroid(find(ismember(f,3))))
+    abs(stuff_centroid(find(ismember(f,3))));
 %find(ismember(f,3)) finds the location of the cell where the value of the
 %frequency is 3 Hz. Taking the absolute value of the abdomen and the
 %centroid at the 3 Hz frequency location gives us the gain.
@@ -78,6 +78,27 @@ Gain = abs(stuff_abdomen(find(ismember(f,3))))/...
 
 %Phase of the signal
 Phase = (angle(stuff_abdomen(find(ismember(f,3))))-...
-    angle(stuff_centroid(find(ismember(f,3)))))*180/pi
+    angle(stuff_centroid(find(ismember(f,3)))))*180/pi;
 
+%% Now to ouput the sucker
+output(i,1) = cellstr(filename); %This will tell us what filename is 
+%associated with this row of data
+output(i,2) = cellstr(filename(4)); %This will distinguish whether the 
+%data is the magnetic or non-magnetic category.
+output(i,3) = cellstr(num2str(Gain)); %This is the gain of this particular 
+%file
+output(i,4) = cellstr(num2str(Phase)); %This is the phase difference 
+%of this particular file
 end
+
+%The next line has our column headers as appropriate.
+col_header={'Filename','MagneticOrNot','Gain','PhaseDifference(deg)'};
+
+%The code below concatenates our output array with the appropriate column
+%header array, for convenience.
+output_mat1 = [col_header
+    output];
+
+filename1 = 'Gain_Phase_project.xlsx'; %This creates the Excel file.
+xlswrite(filename1,output_mat1); %This outputs the appropriate data into 
+%the appropriate sheet on Excel.
