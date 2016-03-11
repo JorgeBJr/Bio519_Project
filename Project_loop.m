@@ -102,3 +102,21 @@ output_mat1 = [col_header
 filename1 = 'Gain_Phase_project.xlsx'; %This creates the Excel file.
 xlswrite(filename1,output_mat1); %This outputs the appropriate data into 
 %the appropriate sheet on Excel.
+
+% Now we can manipulate our output matrix
+Gain_m = output((find(ismember(output(:,2),'m'))),3);
+Gain_nm = output((find(ismember(output(:,2),'n'))),3);
+Phase_m = output((find(ismember(output(:,2),'m'))),4);
+Phase_nm = output((find(ismember(output(:,2),'n'))),4);
+
+%Mean(s)
+Avg_Gain_m = mean(Gain_m)
+Avg_Gain_nm = mean(Gain_nm)
+Avg_Phase_m = mean(Phase_m)
+Avg_Phase_nm = mean(Phase_nm)
+
+%Standard deviation(s)
+std_Gain_m = std(Gain_m)
+std_Gain_nm = std(Gain_nm)
+std_Phase_m = std(Phase_m)
+std_Phase_nm = std(Phase_nm)
