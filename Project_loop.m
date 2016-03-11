@@ -1,4 +1,4 @@
-%% Project - magnetic
+%% Project
 clearvars; close all; clc;
 
 listofcsvfiles = dir('*.csv');  %the asterisk is a wildcard
@@ -15,6 +15,12 @@ listofcsvfiles = dir('*.csv');  %the asterisk is a wildcard
 %numel() function
 NumOfCSVFiles = numel(listofcsvfiles);
 
+%Let's import the static points first
+staticpts_raw = importdata('StaticPoint.csv',',',1);
+staticpts_filename = staticpts_raw.textdata(:,1);
+staticpts_data_X = staticpts_raw.data(:,2);
+staticpts_data_Y = staticpts_raw.data(:,3);
+
 for i = 1:NumOfCSVFiles;
 %% Inside the loop
 filename = listofcsvfiles(i).name;
@@ -27,16 +33,20 @@ filename = listofcsvfiles(i).name;
     %all files and ultimately does NOT import the same file twice.
     
 %Import stuff
-data_centroid = csvread(filename,1,0); %This will import the 
+data = csvread(filename,1,0); %This will import the 
 %CSV file of the centroid (i.e. input stimulus) with the appropriate offset
 %that imports the two columns without the headers. 
 
-Centroid_X = data_centroid(:,1);
-Centroid_Y = data_centroid(:,2);
-StaticPoint_X = 530.810347;
-StaticPoint_Y = 174.693939;
-Abdomen_X = data_abdomen_m(:,1);
-Abdomen_Y = data_abdomen_m(:,2);
+Centroid_X = data(:,5);
+Centroid_Y = data(:,6);
+StaticPoint_X = staticpts(find(ismember(staticpts(:,1),...
+    filename)), 2);
+StaticPoint_Y = staticpts(find(ismember(staticpts(:,1),...
+    filename)), 3);
+Abdomen_X = data(:,1);
+Abdomen_Y = data(:,2);
+Wing_X = data(:,3);
+Wing_Y = data(:,4);
 
 %The following five lines of code are from 
 %http://www.mathworks.com/help/matlab/ref/fft.html 
