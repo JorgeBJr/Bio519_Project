@@ -39,14 +39,15 @@ data = csvread(filename,1,0); %This will import the
 
 Centroid_X = data(:,5);
 Centroid_Y = data(:,6);
-StaticPoint_X = staticpts(find(ismember(staticpts(:,1),...
-    filename)), 2);
-StaticPoint_Y = staticpts(find(ismember(staticpts(:,1),...
-    filename)), 3);
 Abdomen_X = data(:,1);
 Abdomen_Y = data(:,2);
-Wing_X = data(:,3);
-Wing_Y = data(:,4);
+Wing_X = data(:,3); %This is for a post-Winter quarter project
+Wing_Y = data(:,4); %This is for a post-Winter quarter project ;)
+
+%Locate the static points
+Static_location = find(ismember(staticpts_filename,filename));
+StaticPoint_X = staticpts_data_X(Static_location-1);
+StaticPoint_Y = staticpts_data_Y(Static_location-1);
 
 %The following five lines of code are from 
 %http://www.mathworks.com/help/matlab/ref/fft.html 
