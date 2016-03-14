@@ -1,4 +1,4 @@
-%% Project
+%% Project- iterative method to extract all values in an automated fashion
 clearvars; close all; clc;
 
 listofcsvfiles = dir('*.csv');  %the asterisk is a wildcard
@@ -16,10 +16,10 @@ listofcsvfiles = dir('*.csv');  %the asterisk is a wildcard
 NumOfCSVFiles = numel(listofcsvfiles);
 
 %Let's import the static points first
-staticpts_raw = importdata('StaticPoint.csv',',',1);
+staticpts_raw = importdata('StaticPoints.xlsx',',',1);
 staticpts_filename = staticpts_raw.textdata(:,1);
-staticpts_data_X = staticpts_raw.data(:,2);
-staticpts_data_Y = staticpts_raw.data(:,3);
+staticpts_data_X = staticpts_raw.data(:,1);
+staticpts_data_Y = staticpts_raw.data(:,2);
 
 for i = 1:NumOfCSVFiles;
 %% Inside the loop
@@ -107,12 +107,12 @@ col_header={'Filename','MagneticOrNot','Gain','PhaseDifference(deg)'};
 
 %The code below concatenates our output array with the appropriate column
 %header array, for convenience.
-output_mat1 = [col_header
-    output];
+output_mat1 = [col_header; output];
 
 filename1 = 'Gain_Phase_project.xlsx'; %This creates the Excel file.
-xlswrite(filename1,output_mat1); %This outputs the appropriate data into 
-%the appropriate sheet on Excel.
+%xlswrite(filename1,output_mat1); %This outputs the appropriate data into 
+%the appropriate sheet on Excel. For some reason this isn't working right
+%now
 
 % Now we can manipulate our output matrix
 Gain_m = output((find(ismember(output(:,2),'m'))),3);
@@ -121,13 +121,31 @@ Phase_m = output((find(ismember(output(:,2),'m'))),4);
 Phase_nm = output((find(ismember(output(:,2),'n'))),4);
 
 %Mean(s)
-Avg_Gain_m = mean(Gain_m)
-Avg_Gain_nm = mean(Gain_nm)
-Avg_Phase_m = mean(Phase_m)
-Avg_Phase_nm = mean(Phase_nm)
+Avg_Gain_m = mean(str2double(Gain_m))
+Avg_Gain_nm = mean(str2double(Gain_nm))
+Avg_Phase_m = mean(str2double(Phase_m))
+Avg_Phase_nm = mean(str2double(Phase_nm))
+GainVals = [Avg_Gain_m; Avg_Gain_nm];
+PhaseVals = [Avg_Phase_m; Avg_Phase_nm];
 
 %Standard deviation(s)
-std_Gain_m = std(Gain_m)
-std_Gain_nm = std(Gain_nm)
-std_Phase_m = std(Phase_m)
-std_Phase_nm = std(Phase_nm)
+std_Gain_m = std(str2double(Gain_m))
+std_Gain_nm = std(str2double(Gain_nm))
+std_Phase_m = std(str2double(Phase_m))
+std_Phase_nm = std(str2double(Phase_nm))
+StdGainVals = [std_Gain_m; std_Gain_nm];
+StdPhaseVals = [std_Phase_m; std_Phase_nm];
+
+bar(GainVals, 0.4)
+ylabel('Gain')
+xlabel('Magnetic on left, Non-magnetic on right')
+legend('1 = Magnetic, 2 = Non-magnetic')
+
+figure;
+errorbar(GainVals, StdGainVals,'kx','MarkerSize',20)
+xlabel('Magnetic on left, Non-magnetic on right')
+ylabel('Gain')
+
+%T-test for data
+[h_gain, p_gain] = ttest(GainVals)
+[h_phase, p_phase] = ttest(PhaseVals)
