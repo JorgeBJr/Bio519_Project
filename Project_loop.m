@@ -119,6 +119,8 @@ Gain_m = output((find(ismember(output(:,2),'m'))),3);
 Gain_nm = output((find(ismember(output(:,2),'n'))),3);
 Phase_m = output((find(ismember(output(:,2),'m'))),4);
 Phase_nm = output((find(ismember(output(:,2),'n'))),4);
+SampleSize_m = numel(Gain_m);
+SampleSize_nm = numel(Gain_nm);
 
 %Mean(s)
 Avg_Gain_m = mean(str2double(Gain_m))
@@ -136,15 +138,23 @@ std_Phase_nm = std(str2double(Phase_nm))
 StdGainVals = [std_Gain_m; std_Gain_nm];
 StdPhaseVals = [std_Phase_m; std_Phase_nm];
 
+%Two SEM
+TwoSEM_Gain_m = 2*std_Gain_m/sqrt(SampleSize_m);
+TwoSEM_Gain_nm = 2*std_Gain_nm/sqrt(SampleSize_nm);
+TwoSEM_GainVals = [TwoSEM_Gain_m; TwoSEM_Gain_nm];
+
 bar(GainVals, 0.4)
 ylabel('Gain')
-xlabel('Magnetic on left, Non-magnetic on right')
-legend('1 = Magnetic, 2 = Non-magnetic')
+legend('1 = Magnets ON, 2 = Magnets OFF')
+hold on;
+errorbar(GainVals,StdGainVals,'k.')
 
 figure;
-errorbar(GainVals, StdGainVals,'kx','MarkerSize',20)
-xlabel('Magnetic on left, Non-magnetic on right')
+bar(GainVals, 0.4)
 ylabel('Gain')
+legend('1 = Magnets ON, 2 = Magnets OFF')
+hold on;
+errorbar(GainVals,TwoSEM_GainVals,'k.')
 
 %T-test for data
 [h_gain, p_gain] = ttest(GainVals)
