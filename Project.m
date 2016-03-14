@@ -4,19 +4,19 @@ clearvars; close all; clc;
 %% Inside the loop
 
 %Import stuff
-data_centroid_m = csvread('811m_Centerxypts.csv',1,0); %This will import the 
+data_centroid_m = csvread('811m_completexypts.csv',1,0); %This will import the 
 %CSV file of the centroid (i.e. input stimulus) with the appropriate offset
 %that imports the two columns without the headers. 
-data_abdomen_m = csvread('811m_Abdoxypts.csv',1,0); %This will import the 
+%data_abdomen_m = csvread('811m_Abdoxypts.csv',1,0); %This will import the 
 %CSV file of the abdomen (i.e. output response) with the appropriate offset 
 %that imports the two columns without the headers. 
 
-Centroid_X_m = data_centroid_m(:,1);
-Centroid_Y_m = data_centroid_m(:,2);
+Centroid_X_m = data_centroid_m(:,5);
+Centroid_Y_m = data_centroid_m(:,6);
 StaticPoint_X_m = 530.810347;
 StaticPoint_Y_m = 174.693939;
-Abdomen_X_m = data_abdomen_m(:,1);
-Abdomen_Y_m = data_abdomen_m(:,2);
+Abdomen_X_m = data_centroid_m(:,1);
+Abdomen_Y_m = data_centroid_m(:,2);
 
 figure;
 plot(Centroid_X_m',Centroid_Y_m','.','MarkerSize',20)
@@ -50,15 +50,6 @@ deltaAbdomen_Fraction_m = deltaY_Abdomen_m./deltaX_Abdomen_m;
 theta_Abdomen_m = atand(deltaAbdomen_Fraction_m); %This returns the arctan 
 %of the function IN DEGREES
 
-%Because I want to see the theta with respect to time...
-figure;
-plot(t,theta_Centroid_m,'LineWidth',2)
-hold on;
-plot(t,theta_Abdomen_m,'LineWidth',2)
-xlabel('Time (in seconds)')
-ylabel('Theta (in degrees)')
-legend('Centroid','Abdomen')
-
 %Fast Fourier transform stuff with subtracting the mean to reduce noise
 stuff_centroid_m = fft(theta_Centroid_m-mean(theta_Centroid_m),L);
 stuff_abdomen_m = fft(theta_Abdomen_m-mean(theta_Abdomen_m),L);
@@ -66,30 +57,23 @@ stuff_abdomen_m = fft(theta_Abdomen_m-mean(theta_Abdomen_m),L);
 f = Fs*(0:(L/2))/L;
 %f=(1./(T.*L)).*([0:(L/2), ((L/2)-1):-1:1]);
 ampscale = L/2+1; %This is to scale the amplitude
-figure;
-plot(f(1:100),(abs(stuff_centroid_m(1:100))/ampscale),'LineWidth',2);
-hold on;
-plot(f(1:100),(abs(stuff_abdomen_m(1:100))/ampscale),'LineWidth',2);
-xlabel('f (Hz)')
-ylabel('Amplitude')
-legend('Centroid','Abdomen')
 
 %% Non-magnetic
 
 %import stuff
-data_centroid_nm = csvread('811nm_Centerxypts.csv',1,0); %This will import the 
+data_centroid_nm = csvread('811nm_completexypts.csv',1,0); %This will import the 
 %CSV file of the centroid (i.e. input stimulus) with the appropriate offset
 %that imports the two columns without the headers. 
-data_abdomen_nm = csvread('811nm_Abdoxypts.csv',1,0); %This will import the 
+%data_abdomen_nm = csvread('811nm_Abdoxypts.csv',1,0); %This will import the 
 %CSV file of the abdomen (i.e. output response) with the appropriate offset 
 %that imports the two columns without the headers. 
 
-Centroid_X_nm = data_centroid_nm(:,1);
-Centroid_Y_nm = data_centroid_nm(:,2);
+Centroid_X_nm = data_centroid_nm(:,5);
+Centroid_Y_nm = data_centroid_nm(:,6);
 StaticPoint_X_nm = 530.810347;
 StaticPoint_Y_nm = 174.693939;
-Abdomen_X_nm = data_abdomen_nm(:,3);
-Abdomen_Y_nm = data_abdomen_nm(:,4);
+Abdomen_X_nm = data_centroid_nm(:,1);
+Abdomen_Y_nm = data_centroid_nm(:,2);
 
 figure;
 plot(Centroid_X_nm',Centroid_Y_nm','.','MarkerSize',20)
@@ -126,10 +110,20 @@ theta_Abdomen_nm = atand(deltaAbdomen_Fraction_nm); %This returns the
 
 %Because I want to see the theta with respect to time...
 figure;
+subplot(2,1,1)
+plot(t,theta_Centroid_m,'LineWidth',2)
+hold on;
+plot(t,theta_Abdomen_m,'LineWidth',2)
+title('Magnets ON')
+xlabel('Time (in seconds)')
+ylabel('Theta (in degrees)')
+legend('Centroid','Abdomen')
+
+subplot(2,1,2)
 plot(t,theta_Centroid_nm,'LineWidth',2)
 hold on;
 plot(t,theta_Abdomen_nm,'LineWidth',2)
-title('Non-magnetic')
+title('Magnets OFF')
 xlabel('Time (in seconds)')
 ylabel('Theta (in degrees)')
 legend('Centroid','Abdomen')
@@ -141,10 +135,20 @@ stuff_abdomen_nm = fft(theta_Abdomen_nm-mean(theta_Abdomen_nm),L);
 f = Fs*(0:(L/2))/L;
 ampscale = L/2+1; %This is to scale the amplitude
 figure;
+subplot(2,1,1)
+plot(f(1:100),(abs(stuff_centroid_m(1:100))/ampscale),'LineWidth',2);
+hold on;
+plot(f(1:100),(abs(stuff_abdomen_m(1:100))/ampscale),'LineWidth',2);
+title('Magnets ON')
+xlabel('f (Hz)')
+ylabel('Amplitude')
+legend('Centroid','Abdomen')
+
+subplot(2,1,2)
 plot(f(1:100),(abs(stuff_centroid_nm(1:100))/ampscale),'LineWidth',2);
 hold on;
 plot(f(1:100),(abs(stuff_abdomen_nm(1:100))/ampscale),'LineWidth',2);
-title('Non-magnetic')
+title('Magnets OFF')
 xlabel('f (Hz)')
 ylabel('Amplitude')
 legend('Centroid','Abdomen')
